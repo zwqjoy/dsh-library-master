@@ -1,0 +1,24 @@
+{
+  "repository": "https://github.com/techflag/workdsh",
+  "commit": "b9a6c70973082465e42dc4dd3fa3bcdd794e4ec9",
+  "paths": [
+    "packages/plugins/library/src",
+    "packages/plugins/library/locale",
+    "packages/plugins/library/tests/library.test.mjs",
+    "packages/contracts/src/library.ts",
+    "packages/contracts/src/governance.ts",
+    "packages/contracts/src/composer.ts",
+    "packages/ui/src",
+    "packages/plugins/office/src/tabular.js",
+    "packages/plugins/office/src/tabular.d.ts",
+    "packages/plugins/office/src/csv/csv.ts",
+    "LICENSE"
+  ],
+  "adaptations": [
+    "Standalone package, builds and vendored internal contracts/UI/tabular extraction",
+    "Local Host-owned identity without enterprise identity service",
+    "Independent service names, RPC route, storage domain and data directory",
+    "Official sidebar panel entry",
+    "CommonJS-compatible PapaParse default import"
+  ]
+}
