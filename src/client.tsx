@@ -1,4 +1,5 @@
 import { createElement } from 'react';
+import { Icon } from './ui/components/Icon.js';
 import type {} from '@deepseek-ai/dsh-client-ui-sidebar/client';
 import type { ComposerHandoff, ComposerHandoffSource } from './contracts/composer.js';
 declare module '@deepseek-ai/cordis' { interface Events { 'workdsh/composer-handoff'(handoff: ComposerHandoff): Promise<void>; } }
@@ -158,7 +159,7 @@ export function apply(ctx: Context): void {
   }, 'workdsh.library.transcriptReferences');
   ctx.effect(() => ctx.sidebarRightTabs.register({ id: 'dsh-library-master-preview', kind: 'dsh-library-master-preview', title: () => '资料预览' }));
   ctx.slots.inject('sidebar.right.pane.tab', () => ctx.slots.register({ name: 'sidebar.right.pane.tab', key: 'dsh-library-master-preview', inject: () => ({ management, previewRegistry }) }, LibraryReferencePage));
-  ctx.slots.inject('sidebar.panellist', () => ctx.slots.register({name:'sidebar.panellist',id:'dsh-library-master',label:'资料库',order:31}, () => createElement('span', {'aria-hidden': true}, '▤')));
+  ctx.slots.inject('sidebar.panellist', () => ctx.slots.register({name:'sidebar.panellist',id:'dsh-library-master',label:'资料库',order:31}, ({ size }) => createElement(Icon, { name: 'library', size })));
   ctx.slots.inject('main', () => ctx.slots.register({ name: 'main', key: 'dsh-library-master', inject: () => ({ management, previewRegistry, toggleNavigation: () => ctx.layout.toggleSidebar(), startConversation }) }, LibraryPanel));
   ctx.slots.inject('conversation.input.left', () => ctx.slots.register({
     name: 'conversation.input.left', id: 'dsh-library-master-picker', order: 35,
