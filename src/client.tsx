@@ -163,6 +163,6 @@ export function apply(ctx: Context): void {
   ctx.slots.inject('main', () => ctx.slots.register({ name: 'main', key: 'dsh-library-master', inject: () => ({ management, previewRegistry, toggleNavigation: () => ctx.layout.toggleSidebar(), startConversation }) }, LibraryPanel));
   ctx.slots.inject('conversation.input.left', () => ctx.slots.register({
     name: 'conversation.input.left', id: 'dsh-library-master-picker', order: 35,
-    inject: () => ({ management, openLibrary: () => ctx.layout.selectPanel('dsh-library-master' as Parameters<typeof ctx.layout.selectPanel>[0]), addReference: (sessionId: string, entry: import('./contracts/library.js').LibraryTreeEntry) => entry.asset && entry.revision ? insertReference(sessionId, { assetId: entry.asset.id, revisionId: entry.revision.id, nodeId: entry.id, name: entry.name, kind: entry.asset.kind }) : false }),
+    inject: () => ({ management, openLibrary: () => ctx.layout.selectPanel('dsh-library-master' as Parameters<typeof ctx.layout.selectPanel>[0]), addReference: (sessionId: string, entry: import('./client/LibraryPicker.js').LibraryPickerEntry) => entry.asset && entry.revision ? insertReference(sessionId, { assetId: entry.asset.id, revisionId: entry.revision.id, nodeId: entry.id, name: entry.name, kind: entry.asset.kind }) : false }),
   }, LibraryPicker));
 }

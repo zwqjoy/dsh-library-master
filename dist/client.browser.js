@@ -880,112 +880,129 @@ var libraryPickerRequestedEvent = "workdsh:library-picker-requested";
 // src/client/LibraryPicker.tsx
 var import_jsx_runtime7 = require("react/jsx-runtime");
 var css = `
-.wd-library-picker{position:relative;display:flex;align-items:center}
+.wd-library-picker{display:flex;align-items:center}
 .wd-library-picker-trigger{display:grid;place-items:center;width:36px;height:36px;padding:0;border:0;border-radius:10px;background:transparent;color:var(--dsw-alias-label-secondary);font:inherit;cursor:pointer}
-.wd-library-picker-trigger:hover,.wd-library-picker-trigger[aria-expanded="true"]{background:var(--dsw-alias-interactive-bg-hover);color:var(--dsw-alias-label-primary)}
-.wd-library-popover{position:absolute;z-index:90;left:0;bottom:calc(100% + 10px);width:336px;max-height:min(430px,60vh);overflow:auto;padding:8px;border-radius:15px;background:var(--dsw-alias-bg-layer-1);color:var(--dsw-alias-label-primary);box-shadow:var(--dsw-elevation-panel);font:14px/20px "PingFang SC","Microsoft YaHei",sans-serif}
-.wd-library-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px;padding:8px 5px;border-radius:10px}.wd-library-row:hover{background:var(--dsw-alias-interactive-bg-hover)}
-.wd-library-main{display:grid;grid-template-columns:38px minmax(0,1fr);gap:10px;align-items:center;min-width:0;border:0;background:transparent;color:inherit;text-align:left;font:inherit;padding:0;cursor:pointer}
-.wd-library-mark{display:grid;place-items:center;width:38px;height:38px;border-radius:10px;background:var(--dsw-alias-interactive-bg-hover)}
-.wd-library-copy{min-width:0}.wd-library-copy strong,.wd-library-copy small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.wd-library-copy small{margin-top:2px;color:var(--dsw-alias-label-secondary);font-size:11px}
-.wd-library-action,.wd-library-manage,.wd-library-back{border:0;background:transparent;color:inherit;cursor:pointer;font:inherit;padding:6px 8px;border-radius:8px}.wd-library-action:disabled{opacity:.5;cursor:default}
-.wd-library-manage{display:flex;gap:8px;width:100%;margin-top:6px;padding:10px 9px;border-top:1px solid var(--dsw-alias-border-l2);border-radius:0;text-align:left}.wd-library-manage:hover{background:var(--dsw-alias-interactive-bg-hover)}
-.wd-library-status{padding:12px;color:var(--dsw-alias-label-secondary)}
-@media(max-width:560px){.wd-library-popover{position:fixed;left:12px;right:12px;bottom:86px;width:auto}}
+.wd-library-picker-trigger:hover{background:var(--dsw-alias-interactive-bg-hover)}
+.wd-library-select-dialog{box-sizing:border-box;width:min(640px,calc(100vw - 32px));height:min(620px,calc(100dvh - 48px));max-height:calc(100dvh - 48px);padding:0;border:1px solid var(--dsw-alias-border-l2,#ddd);border-radius:16px;background:var(--dsw-alias-bg-layer-1,#fff);color:var(--dsw-alias-label-primary,#222);box-shadow:0 16px 64px #0003;font:14px/22px system-ui,sans-serif;overflow:hidden}
+.wd-library-select-dialog::backdrop{background:#0005}
+.wd-library-select-shell{display:flex;flex-direction:column;height:100%;min-height:0}
+.wd-library-select-header{display:flex;align-items:center;justify-content:space-between;padding:20px 24px 12px}.wd-library-select-header h2{margin:0;font-size:20px}
+.wd-library-select-close{display:grid;place-items:center;width:36px;height:36px;border:0;border-radius:8px;background:transparent;color:inherit;cursor:pointer}
+.wd-library-select-search{margin:0 24px 12px;padding:10px 12px;border:1px solid var(--dsw-alias-border-l2,#ccc);border-radius:8px;background:var(--dsw-alias-bg-base,transparent);color:inherit;font:inherit;min-width:0}
+.wd-library-select-path{padding:0 24px 8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--dsw-alias-label-secondary,#777)}
+.wd-library-select-list{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;padding:0 16px 12px}
+.wd-library-select-row{display:grid;grid-template-columns:36px minmax(0,1fr) auto;align-items:center;gap:12px;width:100%;padding:12px 8px;border:0;border-radius:8px;background:transparent;color:inherit;text-align:left;font:inherit;cursor:pointer}
+.wd-library-select-row:hover,.wd-library-select-close:hover{background:var(--dsw-alias-interactive-bg-hover,#8881)}
+.wd-library-select-row:disabled{opacity:.5;cursor:default}
+.wd-library-select-copy{min-width:0}.wd-library-select-copy strong,.wd-library-select-copy small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.wd-library-select-copy small{color:var(--dsw-alias-label-secondary,#777);font-size:12px}
+.wd-library-select-footer{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 24px;border-top:1px solid var(--dsw-alias-border-l2,#ddd);color:var(--dsw-alias-label-secondary,#777)}
+.wd-library-select-footer button,.wd-library-select-path button{padding:8px;border:0;background:transparent;color:inherit;font:inherit;cursor:pointer}
+.wd-library-select-status{padding:24px;text-align:center;color:var(--dsw-alias-label-secondary,#777)}
+.wd-library-select-dialog :focus-visible{outline:2px solid var(--dsw-alias-brand-primary,#3875e8);outline-offset:2px}
+@media(max-width:560px){.wd-library-select-header{padding:16px}.wd-library-select-search{margin:0 16px 12px}.wd-library-select-footer{padding:12px 16px}}
 `;
 function LibraryPicker({ sessionId, management, openLibrary, addReference }) {
-  const root = React3.useRef(null);
+  const dialog = React3.useRef(null);
   const trigger = React3.useRef(null);
   const [open, setOpen] = React3.useState(false);
   const [path2, setPath] = React3.useState([]);
   const [rows, setRows] = React3.useState([]);
+  const [query, setQuery] = React3.useState("");
   const [loading, setLoading] = React3.useState(false);
   const [error, setError] = React3.useState("");
   const parentId = path2.at(-1)?.id;
+  const show = React3.useCallback(() => {
+    setPath([]);
+    setQuery("");
+    setOpen(true);
+  }, []);
+  const close = () => {
+    setOpen(false);
+  };
   React3.useEffect(() => {
-    const show = () => {
-      setPath([]);
-      setOpen(true);
-    };
     window.addEventListener(libraryPickerRequestedEvent, show);
     return () => window.removeEventListener(libraryPickerRequestedEvent, show);
-  }, []);
+  }, [show]);
+  React3.useEffect(() => {
+    if (open) dialog.current?.showModal();
+    else if (dialog.current?.open) {
+      dialog.current.close();
+      trigger.current?.focus();
+    }
+  }, [open]);
   React3.useEffect(() => {
     if (!open) return;
     let cancelled = false;
     setLoading(true);
     setError("");
     setRows([]);
-    void management.list(parentId).then((items) => {
-      if (!cancelled) setRows(items);
-    }).catch((cause) => {
-      if (!cancelled) setError(cause instanceof Error ? cause.message : "\u65E0\u6CD5\u52A0\u8F7D\u8D44\u6599\u5E93\uFF0C\u8BF7\u91CD\u8BD5\u3002");
-    }).finally(() => {
-      if (!cancelled) setLoading(false);
-    });
+    const timer = window.setTimeout(() => {
+      const request = query.trim() ? management.search(query.trim()).then((hits) => hits.map((hit) => ({ id: hit.nodeId, name: hit.name, kind: "asset", asset: { id: hit.assetId, kind: hit.kind, status: "active" }, revision: { id: hit.revisionId }, folderPath: hit.folderPath }))) : management.list(parentId);
+      void request.then((items) => {
+        if (!cancelled) setRows(items);
+      }).catch((cause) => {
+        if (!cancelled) setError(cause instanceof Error ? cause.message : "\u65E0\u6CD5\u52A0\u8F7D\u8D44\u6599\u5E93\uFF0C\u8BF7\u91CD\u8BD5\u3002");
+      }).finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    }, query.trim() ? 200 : 0);
     return () => {
       cancelled = true;
+      window.clearTimeout(timer);
     };
-  }, [open, parentId, management]);
-  React3.useEffect(() => {
-    if (!open) return;
-    const outside = (event) => {
-      if (!root.current?.contains(event.target)) setOpen(false);
-    };
-    const escape = (event) => {
-      if (event.key === "Escape") {
-        setOpen(false);
-        trigger.current?.focus();
-      }
-    };
-    document.addEventListener("pointerdown", outside);
-    document.addEventListener("keydown", escape);
-    return () => {
-      document.removeEventListener("pointerdown", outside);
-      document.removeEventListener("keydown", escape);
-    };
-  }, [open]);
+  }, [open, parentId, query, management]);
   const pick = (row) => {
     if (row.kind === "folder") {
       setPath((current) => [...current, row]);
       return;
     }
-    if (addReference(String(sessionId), row)) setOpen(false);
+    if (addReference(String(sessionId), row)) close();
     else setError("\u65E0\u6CD5\u6DFB\u52A0\u5F15\u7528\uFF0C\u8BF7\u7B49\u5F85\u8F93\u5165\u6846\u5C31\u7EEA\u540E\u91CD\u8BD5\u3002");
   };
   return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(import_jsx_runtime7.Fragment, { children: [
     /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("style", { children: css }),
-    /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "wd-library-picker", ref: root, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { ref: trigger, type: "button", className: "wd-library-picker-trigger", "aria-label": "\u4ECE\u8D44\u6599\u5E93\u6DFB\u52A0\u5230\u5BF9\u8BDD", "aria-haspopup": "dialog", "aria-expanded": open, title: "\u4ECE\u8D44\u6599\u5E93\u6DFB\u52A0\u5230\u5BF9\u8BDD", onClick: () => {
-        setPath([]);
-        setOpen((value) => !value);
-      }, children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(Icon, { name: "library", size: 22 }) }),
-      open && /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "wd-library-popover", role: "dialog", "aria-label": "\u8D44\u6599\u5E93", children: [
-        parentId && /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("button", { className: "wd-library-back", type: "button", onClick: () => setPath((current) => current.slice(0, -1)), children: [
-          "\u2190 \u8FD4\u56DE \xB7 ",
-          path2.at(-1)?.name
+    /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "wd-library-picker", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { ref: trigger, type: "button", className: "wd-library-picker-trigger", "aria-label": "\u4ECE\u8D44\u6599\u5E93\u6DFB\u52A0\u5230\u5BF9\u8BDD", "aria-haspopup": "dialog", "aria-expanded": open, title: "\u4ECE\u8D44\u6599\u5E93\u6DFB\u52A0\u5230\u5BF9\u8BDD", onClick: show, children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(Icon, { name: "library", size: 22 }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dialog", { ref: dialog, className: "wd-library-select-dialog", "aria-label": "\u9009\u62E9\u8D44\u6599", onCancel: (event) => {
+        event.preventDefault();
+        close();
+      }, onClose: () => setOpen(false), onClick: (event) => {
+        if (event.target === event.currentTarget) {
+          const box = event.currentTarget.getBoundingClientRect();
+          if (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom) close();
+        }
+      }, children: /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "wd-library-select-shell", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("header", { className: "wd-library-select-header", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("h2", { children: "\u9009\u62E9\u8D44\u6599" }),
+          /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { className: "wd-library-select-close", type: "button", "aria-label": "\u5173\u95ED\u8D44\u6599\u9009\u62E9", onClick: close, children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(Icon, { name: "close" }) })
         ] }),
-        loading && /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "wd-library-status", role: "status", children: "\u6B63\u5728\u52A0\u8F7D\u8D44\u6599\u2026" }),
-        error && /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "wd-library-status", role: "alert", children: error }),
-        !loading && !error && !rows.length && /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "wd-library-status", children: "\u6682\u65E0\u8D44\u6599\uFF0C\u53EF\u5728\u8D44\u6599\u5E93\u4E2D\u5BFC\u5165\u6587\u4EF6\u3002" }),
-        rows.map((row) => /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "wd-library-row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("button", { className: "wd-library-main", type: "button", onClick: () => pick(row), disabled: row.kind !== "folder" && (!row.asset || !row.revision), children: [
-            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { className: "wd-library-mark", children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(Icon, { name: row.kind === "folder" ? "folder" : "library" }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("span", { className: "wd-library-copy", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("input", { className: "wd-library-select-search", "aria-label": "\u641C\u7D22\u8D44\u6599", placeholder: "\u641C\u7D22\u5168\u90E8\u8D44\u6599\u7684\u540D\u79F0\u6216\u6B63\u6587", value: query, onChange: (event) => setQuery(event.currentTarget.value) }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "wd-library-select-path", children: query.trim() ? "\u5168\u90E8\u8D44\u6599 \xB7 \u641C\u7D22\u7ED3\u679C" : parentId ? /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(import_jsx_runtime7.Fragment, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { type: "button", onClick: () => setPath((current) => current.slice(0, -1)), children: "\u2190 \u8FD4\u56DE" }),
+          " / ",
+          path2.map((row) => row.name).join(" / ")
+        ] }) : "\u6211\u7684\u8D44\u6599" }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "wd-library-select-list", "aria-busy": loading, children: [
+          loading && /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "wd-library-select-status", role: "status", children: "\u6B63\u5728\u52A0\u8F7D\u8D44\u6599\u2026" }),
+          error && /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "wd-library-select-status", role: "alert", children: error }),
+          !loading && !error && !rows.length && /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "wd-library-select-status", children: query.trim() ? "\u6CA1\u6709\u627E\u5230\u5339\u914D\u8D44\u6599\u3002" : "\u6682\u65E0\u8D44\u6599\uFF0C\u53EF\u5728\u8D44\u6599\u5E93\u4E2D\u5BFC\u5165\u6587\u4EF6\u3002" }),
+          !loading && rows.map((row) => /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("button", { className: "wd-library-select-row", type: "button", "aria-label": `${row.kind === "folder" ? "\u6253\u5F00" : "\u6DFB\u52A0"} ${row.name}`, onClick: () => pick(row), disabled: row.kind !== "folder" && (!row.asset || !row.revision || row.asset.status === "disabled"), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(Icon, { name: row.kind === "folder" ? "folder" : "library" }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("span", { className: "wd-library-select-copy", children: [
               /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("strong", { children: row.name }),
-              /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("small", { children: row.kind === "folder" ? "\u6587\u4EF6\u5939" : row.asset?.kind.toUpperCase() })
-            ] })
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { className: "wd-library-action", type: "button", "aria-label": `${row.kind === "folder" ? "\u6253\u5F00" : "\u6DFB\u52A0"} ${row.name}`, disabled: row.kind !== "folder" && (!row.asset || !row.revision), onClick: () => pick(row), children: row.kind === "folder" ? "\u6253\u5F00" : "\u6DFB\u52A0" })
-        ] }, row.id)),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("button", { className: "wd-library-manage", type: "button", onClick: () => {
-          setOpen(false);
-          openLibrary();
-        }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { "aria-hidden": "true", children: "\u2197" }),
-          "\u7BA1\u7406\u8D44\u6599\u5E93"
+              /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("small", { children: row.kind === "folder" ? "\u6587\u4EF6\u5939" : [row.asset?.kind.toUpperCase(), row.folderPath].filter(Boolean).join(" \xB7 ") })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { children: row.kind === "folder" ? "\u6253\u5F00" : "\u6DFB\u52A0" })
+          ] }, row.id))
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("footer", { className: "wd-library-select-footer", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { children: "\u9009\u62E9\u4E00\u4EFD\u8D44\u6599\u6DFB\u52A0\u5230\u5F53\u524D\u5BF9\u8BDD" }),
+          /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { type: "button", onClick: () => {
+            close();
+            openLibrary();
+          }, children: "\u7BA1\u7406\u8D44\u6599\u5E93 \u2197" })
         ] })
-      ] })
+      ] }) })
     ] })
   ] });
 }

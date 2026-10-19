@@ -1,6 +1,6 @@
 {
   "name": "dsh-library-master",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": false,
   "type": "module",
   "description": "独立 Harness 资料库：文档导入、检索、版本管理与会话引用。",

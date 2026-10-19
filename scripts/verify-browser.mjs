@@ -23,7 +23,7 @@ try {
   await ctx.plugin({name:'dsh-library-smoke',apply}, {root:join(root,'library')});
   assert.ok(route, 'full plugin registers connection route');
   assert.ok(tools.some(tool=>tool.name==='library_read'));
-  const compiled = await build({stdin:{contents:`import React from 'react';import {createRoot} from 'react-dom/client';import {LibraryPanel} from './src/client/LibraryPanel.tsx';import {createLibraryClient} from './src/client/management.ts';import {createLibraryPreviewRegistry} from './src/client/preview-registry.ts';createRoot(document.getElementById('root')).render(React.createElement(LibraryPanel,{management:createLibraryClient({}),previewRegistry:createLibraryPreviewRegistry(),toggleNavigation(){},async startConversation(){}}));`,resolveDir:process.cwd(),loader:'tsx'},bundle:true,write:false,outdir:root,platform:'browser',format:'iife',loader:{'.css':'local-css'},plugins:[{name:'fixture-native-controls',setup(b){b.onResolve({filter:/^@deepseek-ai\/dsh-client-ui-primitives$/},()=>({path:'controls',namespace:'fixture'}));b.onLoad({filter:/.*/,namespace:'fixture'},()=>({contents:`import React from 'react';export const Button=React.forwardRef(({variant,size,...props},ref)=>React.createElement('button',{...props,ref}));export const Input=React.forwardRef((props,ref)=>React.createElement('input',{...props,ref}));`,resolveDir:process.cwd(),loader:'js'}));}}]});
+  const compiled = await build({stdin:{contents:`import React from 'react';import {createRoot} from 'react-dom/client';import {LibraryPicker} from './src/client/LibraryPicker.tsx';import {LibraryPanel} from './src/client/LibraryPanel.tsx';import {createLibraryClient} from './src/client/management.ts';import {createLibraryPreviewRegistry} from './src/client/preview-registry.ts';const management=createLibraryClient({});createRoot(document.getElementById('root')).render(React.createElement(React.Fragment,null,React.createElement(LibraryPicker,{sessionId:'picker-test',management,openLibrary(){window.managed=true;},addReference(sessionId,entry){window.picked=entry;return true;}}),React.createElement(LibraryPanel,{management:createLibraryClient({}),previewRegistry:createLibraryPreviewRegistry(),toggleNavigation(){},async startConversation(){}})));`,resolveDir:process.cwd(),loader:'tsx'},bundle:true,write:false,outdir:root,platform:'browser',format:'iife',loader:{'.css':'local-css'},plugins:[{name:'fixture-native-controls',setup(b){b.onResolve({filter:/^@deepseek-ai\/dsh-client-ui-primitives$/},()=>({path:'controls',namespace:'fixture'}));b.onLoad({filter:/.*/,namespace:'fixture'},()=>({contents:`import React from 'react';export const Button=React.forwardRef(({variant,size,...props},ref)=>React.createElement('button',{...props,ref}));export const Input=React.forwardRef((props,ref)=>React.createElement('input',{...props,ref}));`,resolveDir:process.cwd(),loader:'js'}));}}]});
   const js=compiled.outputFiles.find(file=>file.path.endsWith('.js')).text;
   const css=compiled.outputFiles.find(file=>file.path.endsWith('.css'))?.text??'';
   server=createServer(async(req,res)=>{try{
@@ -49,6 +49,30 @@ try {
   await page.locator('.wd-library-results').getByText('验收资料.md',{exact:true}).click();
   await page.getByText('LibraryBrowserUnique 本地导入检索验收。',{exact:false}).first().waitFor();
   await page.screenshot({path:process.env.LIBRARY_SCREENSHOT || join(root,'library.png'),fullPage:true});
+  const actor = await ctx.dshLibraryIdentity.resolve();
+  const folder = await ctx.dshLibrary.createFolder(actor, '选择器测试文件夹');
+  for(let i=0;i<55;i++) await ctx.dshLibrary.importAsset(actor,{name:`批量资料${String(i).padStart(2,'0')}.md`,bytes:Buffer.from(`第${i}份文档`),operationId:`picker-${i}`});
+  const nested = await ctx.dshLibrary.importAsset(actor,{name:'文件夹内资料.md',parentId:folder.id,bytes:Buffer.from('PickerNestedUnique'),operationId:'picker-nested'});
+  const pickerTrigger=page.getByRole('button',{name:'从资料库添加到对话'});
+  await pickerTrigger.click();
+  const dialog=page.getByRole('dialog',{name:'选择资料'});
+  await dialog.getByRole('button',{name:'打开 选择器测试文件夹'}).click();
+  await dialog.getByRole('button',{name:'添加 文件夹内资料.md'}).waitFor();
+  await dialog.getByRole('button',{name:'← 返回'}).click();
+  await dialog.getByRole('button',{name:'添加 批量资料54.md'}).waitFor();
+  assert.equal(await dialog.evaluate(node=>node.matches(':modal')),true);
+  assert.equal(await dialog.locator('.wd-library-select-list').evaluate(node=>node.scrollHeight>node.clientHeight),true);
+  if(process.env.LIBRARY_PICKER_SCREENSHOT)await page.screenshot({path:process.env.LIBRARY_PICKER_SCREENSHOT});
+  await dialog.getByRole('textbox',{name:'搜索资料'}).fill('PickerNestedUnique');
+  await dialog.getByRole('button',{name:'添加 文件夹内资料.md'}).click();
+  await dialog.waitFor({state:'hidden'});
+  assert.equal(await page.evaluate(()=>window.picked.asset.id),nested.asset.id);
+  assert.equal(await pickerTrigger.evaluate(node=>node===document.activeElement),true);
+  await pickerTrigger.click();await page.keyboard.press('Escape');await dialog.waitFor({state:'hidden'});
+  await page.setViewportSize({width:390,height:700});await pickerTrigger.click();
+  await dialog.getByRole('button',{name:'添加 批量资料54.md'}).waitFor();
+  const bounds=await dialog.boundingBox();assert.ok(bounds.x>=0&&bounds.x+bounds.width<=390&&bounds.y>=0&&bounds.y+bounds.height<=700);
+  await dialog.getByRole('button',{name:'管理资料库 ↗'}).click();await dialog.waitFor({state:'hidden'});assert.equal(await page.evaluate(()=>window.managed),true);
   assert.deepEqual(errors,[]);
-  console.log('PASS: full Host registration, browser import, read, reload persistence and search.');
+  console.log('PASS: modal picker (55 documents), folders, global search, add, Escape, focus return, mobile bounds, manage action; full Host registration, browser import, read, reload persistence and search.');
 } finally {await browser?.close();if(server)await new Promise(resolve=>server.close(resolve));await ctx.fiber.dispose();await rm(root,{recursive:true,force:true});}
